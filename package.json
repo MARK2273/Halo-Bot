@@ -10,8 +10,7 @@
     "lint": "eslint src --ext .ts",
     "lint:fix": "eslint src --ext .ts --fix",
     "format": "prettier --write \"src/**/*.ts\"",
-    "format:check": "prettier --check \"src/**/*.ts\"",
-    "postinstall": "playwright install --with-deps chromium"
+    "format:check": "prettier --check \"src/**/*.ts\""
   },
   "dependencies": {
     "dotenv": "^16.4.5",
