@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  halo-automation-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: halo-automation-agent
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=${NODE_ENV:-production}
+      - PLATFORM_URL=${PLATFORM_URL}
+      - FRONTEND_URL=${FRONTEND_URL}
+      - HALO_EMAIL=${HALO_EMAIL}
+      - HALO_PASSWORD=${HALO_PASSWORD}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}
+      - TELEGRAM_ENABLED=${TELEGRAM_ENABLED:-true}
+      - SCHEDULE_CRON=${SCHEDULE_CRON:-0 8 * * *}
+      - BROWSER_HEADLESS=${BROWSER_HEADLESS:-true}
+      - MAX_RETRIES=${MAX_RETRIES:-3}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+    volumes:
+      - ./reports:/app/reports
+      - ./screenshots:/app/screenshots
+      - ./logs:/app/logs
+    networks:
+      - halo-network
+
+  # Optional: Run agent once for testing
+  halo-automation-agent-once:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: halo-automation-agent-once
+    environment:
+      - NODE_ENV=production
+      - PLATFORM_URL=${PLATFORM_URL}
+      - FRONTEND_URL=${FRONTEND_URL}
+      - HALO_EMAIL=${HALO_EMAIL}
+      - HALO_PASSWORD=${HALO_PASSWORD}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}
+      - TELEGRAM_ENABLED=${TELEGRAM_ENABLED:-true}
+      - RUN_ONCE=true
+      - BROWSER_HEADLESS=true
+      - LOG_LEVEL=debug
+    volumes:
+      - ./reports:/app/reports
+      - ./screenshots:/app/screenshots
+    networks:
+      - halo-network
+    profiles:
+      - once
+
+networks:
+  halo-network:
+    driver: bridge
